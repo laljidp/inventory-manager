@@ -1,6 +1,14 @@
 import * as Yup from 'yup'
 
 export const inventorySchema = Yup.object().shape({
+  product_id: Yup.string().required('Product name is required!'),
+  description: Yup.string().required('Description is required!'),
+  quantity: Yup.number('Invalid quantity entered!').required(
+    'Quantity is required!'
+  ),
+})
+
+export const productSchema = Yup.object().shape({
   name: Yup.string()
     .required('Product name is required!')
     .min(2, 'Too Short name!')
@@ -10,13 +18,6 @@ export const inventorySchema = Yup.object().shape({
     .min(2, 'Too Short name!')
     .max(50, 'Too long name!'),
   description: Yup.string().required('Description is required!'),
-  quantity: Yup.number('Invalid quantity entered!').required(
-    'Quantity is required!'
-  ),
-  costPrice: Yup.number('Invalid cost price entered!').required(
-    'Cost price is requried'
-  ),
-  sellingPrice: Yup.number('Invalid selling price entered!').required(
-    'Selling price is required'
-  ),
+  price: Yup.number('Invalid price entered!').required('Price is required!'),
+  category: Yup.string().required('Category is requried'),
 })

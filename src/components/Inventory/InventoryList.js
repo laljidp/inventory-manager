@@ -6,30 +6,31 @@ const InventoryList = (props) => {
 
   return (
     <div className="inventory-list-section">
-      <Table striped bordered hover variant="dark">
+      <Table striped bordered hover variant="light">
         <thead>
           <tr>
             <th key="#">#</th>
-            <th key="name">Name</th>
-            <th key="code">Code</th>
+            <th key="name">Product ID</th>
+            <th key="code">Quantity</th>
             <th key="desc">Description</th>
-            <th key="quantity">Quantity</th>
-            <th key="cost">Cost price</th>
-            <th key="sellingPrice">Selling price</th>
+            <th key="createdon">Created on</th>
           </tr>
         </thead>
         <tbody>
           {data.map((d, index) => (
             <tr key={d.id}>
               <td>{index + 1}</td>
-              <td>{d.name}</td>
-              <td>{d.code}</td>
-              <td>{d.description}</td>
+              <td>{d.product_id}</td>
               <td>{d.quantity}</td>
-              <td>{d.costPrice}</td>
-              <td>{d.sellingPrice}</td>
+              <td>{d.description}</td>
+              <td>{Date(d.createdAt).toString()}</td>
             </tr>
           ))}
+          {data.length === 0 && (
+            <tr>
+              <td colSpan={7}>No Data found!</td>
+            </tr>
+          )}
         </tbody>
       </Table>
     </div>

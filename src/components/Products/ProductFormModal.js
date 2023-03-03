@@ -1,39 +1,37 @@
 import React, { useState } from 'react'
 import Form from 'react-bootstrap/Form'
-import { addDoc, collection } from 'firebase/firestore'
 import { useFormik } from 'formik'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import InputGroup from 'react-bootstrap/InputGroup'
-import { inventorySchema } from '../utils'
-import { db } from '../firebase'
+import { productSchema } from '../../utils'
 import { Spinner } from 'react-bootstrap'
+import { addProduct } from '../../firebase/products.firebase'
 
 const { Label, Control, Text } = Form
 
 const initialState = {
   name: '',
   code: '',
-  quantity: '',
   description: '',
-  costPrice: '',
-  sellingPrice: '',
+  price: '',
+  category: '',
+  image: '',
 }
 
-const InventoryForm = (props) => {
+const ProductFormModal = (props) => {
   const { show, onClose } = props
   const [submitting, setSubmitting] = useState(false)
 
   const formik = useFormik({
     initialValues: initialState,
-    validationSchema: inventorySchema,
+    validationSchema: productSchema,
     onSubmit: async (payload) => {
-      console.log('payload..', payload)
       try {
         // Call firebase functions to save
         setSubmitting(true)
-        const result = await addDoc(collection(db, 'inventory'), payload)
-        console.log('Document written with ID:', result.id)
+        const result = await addProduct(payload)
+        console.log('Product added written with ID:', result.id)
         setSubmitting(false)
         handleClose()
       } catch (err) {
@@ -50,7 +48,7 @@ const InventoryForm = (props) => {
   const { values, errors, handleChange, handleSubmit, touched } = formik
 
   return (
-    <div className="inventory-form-section">
+    <div className="product-form-section">
       <Modal
         show={show}
         onHide={handleClose}
@@ -58,7 +56,7 @@ const InventoryForm = (props) => {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Add Inventory Item</Modal.Title>
+          <Modal.Title>Add Product item</Modal.Title>
         </Modal.Header>
         <form method="post" onSubmit={handleSubmit}>
           <Modal.Body>
@@ -103,63 +101,53 @@ const InventoryForm = (props) => {
                 <Text className="text-danger">{errors.description}</Text>
               )}
             </Form.Group>
-            <Label>Quantity</Label>
-            <InputGroup className="mb-2">
-              <Control
-                placeholder="Enter quantity"
-                aria-label="Enter Quantity"
-                aria-describedby="basic-addon1"
-                name="quantity"
-                isInvalid={touched.quantity && errors.quantity}
-                value={values.quantity}
-                onChange={handleChange}
-              />
-              {touched.quantity && errors.quantity && (
-                <Form.Control.Feedback type="invalid">
-                  {errors.quantity}
-                </Form.Control.Feedback>
-              )}
-            </InputGroup>
-            <Label>Cost Price</Label>
+            <Label>Price</Label>
             <InputGroup className="mb-2">
               <InputGroup.Text id="basic-addon1">₹</InputGroup.Text>
               <Control
-                placeholder="Enter cost price"
-                name="costPrice"
+                placeholder="Enter product price"
+                name="price"
                 type="number"
-                isInvalid={touched.costPrice && errors.costPrice}
-                value={values.costPrice}
+                isInvalid={touched.price && errors.price}
+                value={values.price}
                 onChange={handleChange}
               />
-              {touched.costPrice && errors.costPrice && (
+              {touched.price && errors.price && (
                 <Form.Control.Feedback type="invalid">
-                  {errors.costPrice}
+                  {errors.price}
                 </Form.Control.Feedback>
               )}
             </InputGroup>
-            <Label>Selling Price</Label>
-            <InputGroup>
-              <InputGroup.Text id="basic-addon1">₹</InputGroup.Text>
+            <Label>Category</Label>
+            <Form.Group>
               <Control
-                placeholder="Enter selling price"
-                name="sellingPrice"
-                type="number"
-                isInvalid={touched.sellingPrice && errors.sellingPrice}
-                value={values.sellingPrice}
+                placeholder="Select Category"
+                name="category"
+                as="select"
+                isInvalid={touched.category && errors.category}
+                value={values.category}
                 onChange={handleChange}
-              />
-              {touched.sellingPrice && errors.sellingPrice && (
+              >
+                <option>Select Option</option>
+                <option>Home Appliences</option>
+              </Control>
+              {touched.category && errors.category && (
                 <Form.Control.Feedback type="invalid">
                   {errors.sellingPrice}
                 </Form.Control.Feedback>
               )}
-            </InputGroup>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button size="sm" variant="secondary" onClick={handleClose}>
               Close
             </Button>
-            <Button type="submit" variant="primary" disabled={submitting}>
+            <Button
+              size="sm"
+              type="submit"
+              variant="primary"
+              disabled={submitting}
+            >
               {submitting ? (
                 <>
                   <Spinner
@@ -168,7 +156,7 @@ const InventoryForm = (props) => {
                     size="sm"
                     role="status"
                     aria-hidden="true"
-                  />{' '}
+                  />
                   Saving..
                 </>
               ) : (
@@ -182,4 +170,4 @@ const InventoryForm = (props) => {
   )
 }
 
-export default InventoryForm
+export default ProductFormModal
